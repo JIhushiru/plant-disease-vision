@@ -13,6 +13,7 @@ app_port: 7860
 ![Stack](https://img.shields.io/badge/FastAPI-009688?style=flat&logo=fastapi&logoColor=white)
 ![Stack](https://img.shields.io/badge/React-61DAFB?style=flat&logo=react&logoColor=black)
 ![Stack](https://img.shields.io/badge/Docker-2496ED?style=flat&logo=docker&logoColor=white)
+![Stack](https://img.shields.io/badge/Firebase-DD2C00?style=flat&logo=firebase&logoColor=white)
 
 A computer vision system that identifies plant diseases from leaf photographs. The idea comes from a straightforward observation: smallholder farmers lose roughly 20–40 % of their crop yield to pests and disease every year, and most of that loss is preventable if the problem is caught early. This project explores whether a lightweight deep learning pipeline, accessible through a browser, can make that kind of early detection practical.
 
@@ -89,7 +90,7 @@ The Vite dev server proxies `/api` to `localhost:8000`.
 
 ## Training
 
-1. Download the [PlantVillage dataset](https://www.kaggle.com/datasets/emmarex/plantdisease) → extract to `backend/data/PlantVillage/`
+1. Download the [PlantVillage dataset](https://www.kaggle.com/datasets/abdallahalidev/plantvillage-dataset) → extract the `color` folder to `backend/data/PlantVillage/`
 
 2. Train:
 
@@ -103,7 +104,7 @@ python -m training.train \
   --lr 0.001
 ```
 
-The training loop uses AdamW with cosine annealing and saves the best checkpoint by validation accuracy. On a single GPU, expect ~95%+ validation accuracy within 15–20 epochs.
+The training loop uses AdamW with cosine annealing and saves the best checkpoint by validation accuracy. On a single GPU, expect ~99%+ validation accuracy within 15–20 epochs.
 
 3. Evaluate:
 
@@ -118,26 +119,30 @@ python -m training.evaluate \
 ```
 backend/
 ├── app/
-│   ├── main.py                # FastAPI app, CORS, lifespan
-│   ├── config.py              # Pydantic settings (env-configurable)
-│   ├── models/classifier.py   # Model architecture, class names, disease DB
-│   ├── routes/predict.py      # /api/predict, /api/classes endpoints
-│   ├── services/prediction.py # Inference orchestration
+│   ├── main.py                  # FastAPI app, CORS, lifespan
+│   ├── config.py                # Pydantic settings (env-configurable)
+│   ├── models/classifier.py     # Model architecture, class names, disease DB
+│   ├── routes/predict.py        # /api/predict, /api/classes endpoints
+│   ├── services/prediction.py   # Inference orchestration
 │   └── utils/image_processing.py
 ├── training/
-│   ├── train.py               # Training loop w/ checkpointing
-│   ├── dataset.py             # PlantVillage loader + augmentation
-│   └── evaluate.py            # Per-class accuracy evaluation
+│   ├── train.py                 # Training loop w/ checkpointing
+│   ├── dataset.py               # PlantVillage loader + augmentation
+│   └── evaluate.py              # Per-class accuracy evaluation
 └── Dockerfile
 
 frontend/
 ├── src/
-│   ├── App.jsx                # Layout, state management, history
-│   ├── components/            # UI (dropzone, results, confidence bars, etc.)
-│   ├── hooks/usePrediction.js # Async prediction state machine
-│   └── services/api.js        # Axios client w/ error interceptors
-├── nginx.conf                 # Production reverse proxy
-└── Dockerfile                 # Multi-stage Node → Nginx build
+│   ├── App.jsx                  # Layout, state management, history
+│   ├── components/              # UI (dropzone, results, confidence bars, etc.)
+│   ├── hooks/
+│   │   ├── usePrediction.js     # Async prediction state machine
+│   │   └── useFirebaseHistory.js # Real-time history sync + thumbnail gen
+│   └── services/
+│       ├── api.js               # Axios client w/ error interceptors
+│       └── firebase.js          # Firebase RTDB init, CRUD operations
+├── nginx.conf                   # Production reverse proxy
+└── Dockerfile                   # Multi-stage Node → Nginx build
 ```
 
 ## Tech Stack
@@ -148,4 +153,5 @@ frontend/
 | API        | FastAPI, Python 3.12                    | Async I/O, auto validation, OpenAPI docs             |
 | Frontend   | React 19, Vite, Tailwind CSS            | Fast dev loop, utility-first styling, small bundle   |
 | Animation  | Framer Motion                           | Physics-based transitions for result reveals         |
-| Deployment | Docker Compose, Nginx                   | One-command orchestration, static asset caching      |
+| Persistence| Firebase Realtime Database              | Cloud-synced analysis history across sessions        |
+| Deployment | Docker, Hugging Face Spaces, Vercel     | Free-tier hosting, Git-based CI/CD                   |
