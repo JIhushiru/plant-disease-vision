@@ -1,4 +1,5 @@
 import { initializeApp } from "firebase/app";
+import { getAuth, signInAnonymously, onAuthStateChanged } from "firebase/auth";
 import { getDatabase, ref, push, query, limitToLast, onValue, remove } from "firebase/database";
 
 const firebaseConfig = {
@@ -14,20 +15,39 @@ const firebaseConfig = {
 const isConfigured = Object.values(firebaseConfig).every(Boolean);
 
 let db = null;
+let auth = null;
 
 if (isConfigured) {
   const app = initializeApp(firebaseConfig);
   db = getDatabase(app);
+  auth = getAuth(app);
+  signInAnonymously(auth).catch((err) => {
+    console.warn("Firebase anonymous auth failed:", err.message);
+  });
 }
 
 export function isFirebaseEnabled() {
   return db !== null;
 }
 
-export function saveAnalysis(prediction, imageDataUrl) {
-  if (!db) return null;
+export function onAuthReady(callback) {
+  if (!auth) {
+    callback(null);
+    return () => {};
+  }
+  return onAuthStateChanged(auth, (user) => callback(user));
+}
 
-  const analysesRef = ref(db, "analyses");
+function getUserRef(path) {
+  const uid = auth?.currentUser?.uid;
+  if (!db || !uid) return null;
+  return ref(db, `users/${uid}/${path}`);
+}
+
+export function saveAnalysis(prediction, imageDataUrl) {
+  const analysesRef = getUserRef("analyses");
+  if (!analysesRef) return null;
+
   return push(analysesRef, {
     prediction: prediction.prediction,
     alternatives: prediction.alternatives,
@@ -37,12 +57,12 @@ export function saveAnalysis(prediction, imageDataUrl) {
 }
 
 export function subscribeToHistory(callback, limit = 10) {
-  if (!db) {
+  const analysesRef = getUserRef("analyses");
+  if (!analysesRef) {
     callback([]);
     return () => {};
   }
 
-  const analysesRef = ref(db, "analyses");
   const recentQuery = query(analysesRef, limitToLast(limit));
 
   const unsubscribe = onValue(recentQuery, (snapshot) => {
@@ -63,7 +83,7 @@ export function subscribeToHistory(callback, limit = 10) {
 }
 
 export function clearHistory() {
-  if (!db) return null;
-  const analysesRef = ref(db, "analyses");
+  const analysesRef = getUserRef("analyses");
+  if (!analysesRef) return null;
   return remove(analysesRef);
 }

@@ -146,7 +146,7 @@ frontend/
 │   │   └── useFirebaseHistory.js # Real-time history sync + thumbnail gen
 │   └── services/
 │       ├── api.js               # Axios client w/ error interceptors
-│       └── firebase.js          # Firebase RTDB init, CRUD operations
+│       └── firebase.js          # Firebase Auth + RTDB, per-user scoping
 ├── nginx.conf                   # Production reverse proxy
 └── Dockerfile                   # Multi-stage Node → Nginx build
 ```
@@ -160,5 +160,5 @@ frontend/
 | API        | FastAPI, Python 3.12                    | Async I/O, auto validation, OpenAPI docs             |
 | Frontend   | React 19, Vite, Tailwind CSS            | Fast dev loop, utility-first styling, small bundle   |
 | Animation  | Framer Motion                           | Physics-based transitions for result reveals         |
-| Persistence| Firebase Realtime Database              | Cloud-synced analysis history across sessions        |
+| Persistence| Firebase Auth + Realtime Database        | Anonymous auth scopes history per user, no login required |
 | Deployment | Docker, Hugging Face Spaces, Vercel     | Free-tier hosting, Git-based CI/CD                   |

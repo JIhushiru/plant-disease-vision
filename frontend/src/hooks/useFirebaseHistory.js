@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import {
   isFirebaseEnabled,
+  onAuthReady,
   saveAnalysis,
   subscribeToHistory,
   clearHistory,
@@ -28,31 +29,38 @@ function createThumbnail(file, maxSize = 80) {
 
 export function useFirebaseHistory() {
   const [history, setHistory] = useState([]);
+  const [authed, setAuthed] = useState(false);
   const enabled = isFirebaseEnabled();
 
   useEffect(() => {
     if (!enabled) return;
+    const unsubscribe = onAuthReady((user) => setAuthed(!!user));
+    return unsubscribe;
+  }, [enabled]);
+
+  useEffect(() => {
+    if (!enabled || !authed) return;
 
     const unsubscribe = subscribeToHistory((entries) => {
       setHistory(entries);
     });
 
     return unsubscribe;
-  }, [enabled]);
+  }, [enabled, authed]);
 
   const addEntry = useCallback(
     async (result, file) => {
-      if (!enabled || !result?.success) return;
+      if (!enabled || !authed || !result?.success) return;
       const thumbnail = file ? await createThumbnail(file) : null;
       await saveAnalysis(result, thumbnail);
     },
-    [enabled],
+    [enabled, authed],
   );
 
   const clear = useCallback(async () => {
-    if (!enabled) return;
+    if (!enabled || !authed) return;
     await clearHistory();
-  }, [enabled]);
+  }, [enabled, authed]);
 
   return { history, addEntry, clear, enabled };
 }
