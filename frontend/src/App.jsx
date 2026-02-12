@@ -8,10 +8,13 @@ import InfoPanel from "./components/InfoPanel";
 import HistoryPanel from "./components/HistoryPanel";
 import HowItWorks from "./components/HowItWorks";
 import SupportedPlants from "./components/SupportedPlants";
+import MaintenancePage from "./components/MaintenancePage";
 import { usePrediction } from "./hooks/usePrediction";
 import { useFirebaseHistory } from "./hooks/useFirebaseHistory";
 import { useDarkMode } from "./hooks/useDarkMode";
 import { RotateCcw } from "lucide-react";
+
+const MAINTENANCE_MODE = import.meta.env.VITE_MAINTENANCE === "true";
 
 let localId = 0;
 
@@ -29,6 +32,10 @@ export default function App() {
   } = useFirebaseHistory();
   const [dark, setDark] = useDarkMode();
   const resultRef = useRef(null);
+
+  if (MAINTENANCE_MODE) {
+    return <MaintenancePage dark={dark} onToggleDark={() => setDark(!dark)} />;
+  }
 
   const history = firebaseEnabled ? firebaseHistory : localHistory;
 
