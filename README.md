@@ -1,3 +1,12 @@
+---
+title: Plant Disease Vision
+emoji: "\U0001F33F"
+colorFrom: green
+colorTo: yellow
+sdk: docker
+app_port: 7860
+---
+
 # Plant Disease Vision
 
 ![Stack](https://img.shields.io/badge/PyTorch-EE4C2C?style=flat&logo=pytorch&logoColor=white)

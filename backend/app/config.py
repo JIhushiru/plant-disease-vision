@@ -20,7 +20,10 @@ class Settings(BaseSettings):
         "http://localhost:3000",
         "http://localhost:80",
         "http://frontend:80",
+        "https://*.vercel.app",
+        "https://*.hf.space",
     ]
+    allow_all_origins: bool = True
 
     max_file_size: int = 10 * 1024 * 1024  # 10 MB
     allowed_extensions: set[str] = {"jpg", "jpeg", "png", "webp", "bmp"}
