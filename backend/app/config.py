@@ -28,6 +28,10 @@ class Settings(BaseSettings):
     max_file_size: int = 10 * 1024 * 1024  # 10 MB
     allowed_extensions: set[str] = {"jpg", "jpeg", "png", "webp", "bmp"}
 
+    guard_confidence_threshold: float = 0.45
+    guard_entropy_threshold: float = 0.75
+    guard_margin_threshold: float = 0.10
+
     class Config:
         env_file = ".env"
         env_prefix = "PDV_"

@@ -5,6 +5,7 @@ import torch.nn.functional as F
 
 from app.models.classifier import CLASS_NAMES, DISEASE_INFO, load_model
 from app.utils.image_processing import preprocess_image, validate_image
+from app.utils.plant_guard import check_plant_validity
 
 logger = logging.getLogger(__name__)
 
@@ -48,6 +49,10 @@ def predict(image_bytes: bytes) -> dict:
         return {"success": False, "error": "Model inference failed. Please try again."}
 
     probs = probabilities.squeeze().cpu().numpy()
+
+    is_plant, rejection_reason = check_plant_validity(probs)
+    if not is_plant:
+        return {"success": True, "rejected": True, "reason": rejection_reason}
 
     top_k = 5
     top_indices = probs.argsort()[::-1][:top_k]

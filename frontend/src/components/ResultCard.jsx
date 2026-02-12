@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import ConfidenceBar from "./ConfidenceBar";
+import RejectionCard from "./RejectionCard";
 
 function DiseaseDetail({ icon: Icon, title, content, color, delay }) {
   return (
@@ -38,6 +39,7 @@ export default function ResultCard({ result }) {
   const [showAlternatives, setShowAlternatives] = useState(false);
 
   if (!result) return null;
+  if (result.rejected) return <RejectionCard reason={result.reason} />;
 
   const { prediction, alternatives } = result;
   const { plant, condition, confidence, is_healthy, info } = prediction;
