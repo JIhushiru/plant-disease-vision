@@ -23,15 +23,15 @@ export default function HistoryPanel({
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"
+      className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm overflow-hidden"
     >
-      <div className="flex items-center justify-between px-5 py-3.5 border-b border-gray-50">
+      <div className="flex items-center justify-between px-5 py-3.5 border-b border-gray-50 dark:border-slate-700">
         <div className="flex items-center gap-2">
-          <Clock className="w-4 h-4 text-gray-400" />
-          <h3 className="text-sm font-semibold text-gray-700">
+          <Clock className="w-4 h-4 text-gray-400 dark:text-slate-500" />
+          <h3 className="text-sm font-semibold text-gray-700 dark:text-slate-200">
             Recent Analyses
           </h3>
-          <span className="text-xs text-gray-400 bg-gray-100 rounded-full px-2 py-0.5">
+          <span className="text-xs text-gray-400 dark:text-slate-400 bg-gray-100 dark:bg-slate-700 rounded-full px-2 py-0.5">
             {history.length}
           </span>
           {persisted && (
@@ -40,14 +40,14 @@ export default function HistoryPanel({
         </div>
         <button
           onClick={onClear}
-          className="text-xs text-gray-400 hover:text-danger-500 transition-colors flex items-center gap-1"
+          className="text-xs text-gray-400 dark:text-slate-500 hover:text-danger-500 dark:hover:text-danger-400 transition-colors flex items-center gap-1"
         >
           <Trash2 className="w-3 h-3" />
           Clear
         </button>
       </div>
 
-      <div className="divide-y divide-gray-50 max-h-64 overflow-y-auto">
+      <div className="divide-y divide-gray-50 dark:divide-slate-700/50 max-h-64 overflow-y-auto">
         <AnimatePresence>
           {history.map((item, idx) => {
             const pred = getPrediction(item);
@@ -63,24 +63,24 @@ export default function HistoryPanel({
                 exit={{ opacity: 0, x: 10 }}
                 transition={{ delay: idx * 0.05 }}
                 onClick={() => onSelect(item)}
-                className="w-full flex items-center gap-3 px-5 py-3 hover:bg-gray-50 transition-colors text-left"
+                className="w-full flex items-center gap-3 px-5 py-3 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors text-left"
               >
                 {thumb ? (
                   <img
                     src={thumb}
                     alt=""
-                    className="w-10 h-10 rounded-lg object-cover shrink-0 border border-gray-100"
+                    className="w-10 h-10 rounded-lg object-cover shrink-0 border border-gray-100 dark:border-slate-600"
                   />
                 ) : (
-                  <div className="w-10 h-10 rounded-lg bg-gray-100 shrink-0 flex items-center justify-center">
-                    <span className="text-gray-400 text-xs">img</span>
+                  <div className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-slate-700 shrink-0 flex items-center justify-center">
+                    <span className="text-gray-400 dark:text-slate-500 text-xs">img</span>
                   </div>
                 )}
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-800 truncate">
+                  <p className="text-sm font-medium text-gray-800 dark:text-slate-200 truncate">
                     {pred.condition}
                   </p>
-                  <p className="text-xs text-gray-400 truncate">
+                  <p className="text-xs text-gray-400 dark:text-slate-500 truncate">
                     {pred.plant} — {pred.confidence.toFixed(1)}%
                   </p>
                 </div>

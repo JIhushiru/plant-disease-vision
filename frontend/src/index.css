@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --color-primary-50: #f0fdf4;
   --color-primary-100: #dcfce7;
@@ -51,6 +53,10 @@ body {
   background-color: #f9fafb;
 }
 
+.dark body {
+  background-color: #0f172a;
+}
+
 #root {
   min-height: 100vh;
 }
@@ -69,6 +75,17 @@ body {
     90deg,
     transparent 25%,
     rgba(255, 255, 255, 0.4) 50%,
+    transparent 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+.dark .animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent 25%,
+    rgba(255, 255, 255, 0.08) 50%,
     transparent 75%
   );
   background-size: 200% 100%;

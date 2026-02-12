@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import { motion, AnimatePresence } from "framer-motion";
 import { Upload, Image as ImageIcon, Leaf } from "lucide-react";
@@ -33,10 +33,10 @@ export default function ImageDropzone({ onFileSelect, loading, preview }) {
         overflow-hidden group
         ${
           isDragActive
-            ? "border-primary-400 bg-primary-50/70 scale-[1.01] shadow-lg shadow-primary-500/10"
+            ? "border-primary-400 bg-primary-50/70 dark:bg-primary-900/20 scale-[1.01] shadow-lg shadow-primary-500/10"
             : preview
-              ? "border-transparent bg-gray-50 hover:shadow-lg"
-              : "border-gray-200 hover:border-primary-300 hover:bg-primary-50/30 hover:shadow-md"
+              ? "border-transparent bg-gray-50 dark:bg-slate-800 hover:shadow-lg"
+              : "border-gray-200 dark:border-slate-700 hover:border-primary-300 hover:bg-primary-50/30 dark:hover:bg-primary-900/10 hover:shadow-md"
         }
         ${loading ? "opacity-60 pointer-events-none" : ""}
         ${preview ? "p-0 border-solid" : "p-8 sm:p-14"}
@@ -56,14 +56,14 @@ export default function ImageDropzone({ onFileSelect, loading, preview }) {
             <img
               src={preview}
               alt="Uploaded plant leaf"
-              className="w-full h-full object-contain bg-gray-50 rounded-2xl"
+              className="w-full h-full object-contain bg-gray-50 dark:bg-slate-800 rounded-2xl"
             />
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-300 rounded-2xl flex items-center justify-center">
               <motion.div
                 initial={{ opacity: 0, y: 5 }}
-                className="opacity-0 group-hover:opacity-100 transition-all duration-200 bg-white/95 backdrop-blur-sm rounded-xl px-5 py-2.5 shadow-xl"
+                className="opacity-0 group-hover:opacity-100 transition-all duration-200 bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm rounded-xl px-5 py-2.5 shadow-xl"
               >
-                <p className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                <p className="text-sm font-semibold text-gray-700 dark:text-slate-200 flex items-center gap-2">
                   <ImageIcon className="w-4 h-4 text-primary-500" />
                   Click or drop to replace
                 </p>
@@ -89,36 +89,36 @@ export default function ImageDropzone({ onFileSelect, loading, preview }) {
                 w-18 h-18 rounded-2xl flex items-center justify-center transition-colors duration-300 shadow-sm
                 ${
                   isDragActive
-                    ? "bg-primary-200 shadow-primary-200/50"
-                    : "bg-gray-100 group-hover:bg-primary-100"
+                    ? "bg-primary-200 dark:bg-primary-800 shadow-primary-200/50"
+                    : "bg-gray-100 dark:bg-slate-800 group-hover:bg-primary-100 dark:group-hover:bg-primary-900/30"
                 }
               `}
             >
               {isDragActive ? (
-                <Leaf className="w-8 h-8 text-primary-600" />
+                <Leaf className="w-8 h-8 text-primary-600 dark:text-primary-400" />
               ) : (
-                <Upload className="w-8 h-8 text-gray-400 group-hover:text-primary-500 transition-colors duration-300" />
+                <Upload className="w-8 h-8 text-gray-400 dark:text-slate-500 group-hover:text-primary-500 transition-colors duration-300" />
               )}
             </motion.div>
             <div>
-              <p className="text-base font-bold text-gray-800">
+              <p className="text-base font-bold text-gray-800 dark:text-slate-200">
                 {isDragActive
                   ? "Drop your image here"
                   : "Drop a plant leaf image here"}
               </p>
-              <p className="text-sm text-gray-500 mt-1.5">
+              <p className="text-sm text-gray-500 dark:text-slate-400 mt-1.5">
                 or{" "}
-                <span className="text-primary-600 font-medium">
+                <span className="text-primary-600 dark:text-primary-400 font-medium">
                   click to browse
                 </span>{" "}
                 your files
               </p>
             </div>
-            <div className="flex items-center gap-3 text-xs text-gray-400">
-              <span className="bg-gray-100 px-2.5 py-1 rounded-md">JPG</span>
-              <span className="bg-gray-100 px-2.5 py-1 rounded-md">PNG</span>
-              <span className="bg-gray-100 px-2.5 py-1 rounded-md">WebP</span>
-              <span className="text-gray-300">|</span>
+            <div className="flex items-center gap-3 text-xs text-gray-400 dark:text-slate-500">
+              <span className="bg-gray-100 dark:bg-slate-800 px-2.5 py-1 rounded-md">JPG</span>
+              <span className="bg-gray-100 dark:bg-slate-800 px-2.5 py-1 rounded-md">PNG</span>
+              <span className="bg-gray-100 dark:bg-slate-800 px-2.5 py-1 rounded-md">WebP</span>
+              <span className="text-gray-300 dark:text-slate-600">|</span>
               <span>Max 10 MB</span>
             </div>
           </motion.div>

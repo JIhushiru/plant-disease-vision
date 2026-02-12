@@ -15,10 +15,10 @@ export default function ConfidenceBar({
   };
 
   const getBgColor = () => {
-    if (isHealthy) return "bg-primary-50";
-    if (confidence > 50) return "bg-danger-50";
-    if (confidence > 25) return "bg-warning-50";
-    return "bg-gray-50";
+    if (isHealthy) return "bg-primary-50 dark:bg-primary-900/20";
+    if (confidence > 50) return "bg-danger-50 dark:bg-danger-900/20";
+    if (confidence > 25) return "bg-warning-50 dark:bg-warning-400/10";
+    return "bg-gray-50 dark:bg-slate-700";
   };
 
   return (
@@ -26,20 +26,19 @@ export default function ConfidenceBar({
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay, duration: 0.4, ease: "easeOut" }}
-      className={`${isPrimary ? "" : ""}`}
     >
       <div className="flex items-center justify-between mb-1.5">
         <span
           className={`${
             isPrimary ? "text-sm font-semibold" : "text-xs font-medium"
-          } text-gray-700 truncate mr-3`}
+          } text-gray-700 dark:text-slate-300 truncate mr-3`}
         >
           {label}
         </span>
         <span
           className={`${
             isPrimary ? "text-sm font-bold" : "text-xs font-semibold"
-          } text-gray-900 tabular-nums shrink-0`}
+          } text-gray-900 dark:text-white tabular-nums shrink-0`}
         >
           {confidence.toFixed(1)}%
         </span>

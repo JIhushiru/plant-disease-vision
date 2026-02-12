@@ -21,8 +21,8 @@ export default function SupportedPlants() {
   return (
     <div className="mt-12">
       <div className="text-center mb-5">
-        <h3 className="text-lg font-bold text-gray-900">Supported Crops</h3>
-        <p className="text-sm text-gray-500 mt-1">
+        <h3 className="text-lg font-bold text-gray-900 dark:text-white">Supported Crops</h3>
+        <p className="text-sm text-gray-500 dark:text-slate-400 mt-1">
           14 plant species with 38 disease categories
         </p>
       </div>
@@ -34,10 +34,10 @@ export default function SupportedPlants() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ delay: idx * 0.03, duration: 0.3 }}
-            className="flex items-center gap-1.5 bg-white border border-gray-100 rounded-full px-3 py-1.5 text-sm shadow-sm hover:shadow-md hover:border-primary-200 transition-all"
+            className="flex items-center gap-1.5 bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 rounded-full px-3 py-1.5 text-sm shadow-sm hover:shadow-md hover:border-primary-200 dark:hover:border-primary-700 transition-all"
           >
             <span className="text-base">{plant.emoji}</span>
-            <span className="text-gray-700 font-medium">{plant.name}</span>
+            <span className="text-gray-700 dark:text-slate-300 font-medium">{plant.name}</span>
           </motion.div>
         ))}
       </div>

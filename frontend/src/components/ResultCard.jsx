@@ -26,10 +26,10 @@ function DiseaseDetail({ icon: Icon, title, content, color, delay }) {
         <Icon className="w-4 h-4" />
       </div>
       <div className="min-w-0">
-        <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">
+        <h4 className="text-xs font-bold text-gray-400 dark:text-slate-500 uppercase tracking-wider mb-0.5">
           {title}
         </h4>
-        <p className="text-sm text-gray-700 leading-relaxed">{content}</p>
+        <p className="text-sm text-gray-700 dark:text-slate-300 leading-relaxed">{content}</p>
       </div>
     </motion.div>
   );
@@ -59,7 +59,7 @@ export default function ResultCard({ result }) {
         className="flex items-center gap-2"
       >
         <Sparkles className="w-4 h-4 text-primary-500" />
-        <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+        <span className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
           Analysis Complete
         </span>
       </motion.div>
@@ -68,8 +68,8 @@ export default function ResultCard({ result }) {
       <div
         className={`rounded-2xl p-5 sm:p-6 border-2 transition-colors ${
           is_healthy
-            ? "bg-linear-to-br from-primary-50/80 to-primary-100/40 border-primary-200"
-            : "bg-linear-to-br from-danger-50/80 to-danger-100/40 border-danger-200"
+            ? "bg-linear-to-br from-primary-50/80 to-primary-100/40 border-primary-200 dark:from-primary-900/20 dark:to-primary-800/10 dark:border-primary-700"
+            : "bg-linear-to-br from-danger-50/80 to-danger-100/40 border-danger-200 dark:from-danger-900/20 dark:to-danger-800/10 dark:border-danger-700"
         }`}
       >
         <div className="flex items-start gap-3 mb-5">
@@ -90,10 +90,10 @@ export default function ResultCard({ result }) {
             )}
           </motion.div>
           <div className="min-w-0">
-            <h3 className="text-xl font-bold text-gray-900 leading-tight">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white leading-tight">
               {condition}
             </h3>
-            <p className="text-sm text-gray-500 mt-0.5">{plant}</p>
+            <p className="text-sm text-gray-500 dark:text-slate-400 mt-0.5">{plant}</p>
           </div>
         </div>
 
@@ -111,9 +111,9 @@ export default function ResultCard({ result }) {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.4 }}
-          className="bg-white rounded-2xl border border-gray-100 p-5 sm:p-6 space-y-4 shadow-sm"
+          className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 p-5 sm:p-6 space-y-4 shadow-sm"
         >
-          <h3 className="text-xs font-bold text-gray-900 uppercase tracking-wider">
+          <h3 className="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-wider">
             Disease Information
           </h3>
           <div className="space-y-4">
@@ -121,21 +121,21 @@ export default function ResultCard({ result }) {
               icon={Bug}
               title="Cause"
               content={info.cause}
-              color="bg-orange-100 text-orange-600"
+              color="bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400"
               delay={0.4}
             />
             <DiseaseDetail
               icon={Stethoscope}
               title="Symptoms"
               content={info.symptoms}
-              color="bg-blue-100 text-blue-600"
+              color="bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400"
               delay={0.5}
             />
             <DiseaseDetail
               icon={Pill}
               title="Recommended Treatment"
               content={info.treatment}
-              color="bg-violet-100 text-violet-600"
+              color="bg-violet-100 text-violet-600 dark:bg-violet-900/30 dark:text-violet-400"
               delay={0.6}
             />
           </div>
@@ -147,12 +147,12 @@ export default function ResultCard({ result }) {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.4 }}
-          className="bg-white rounded-2xl border border-gray-100 p-5 sm:p-6 shadow-sm"
+          className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 p-5 sm:p-6 shadow-sm"
         >
-          <h3 className="text-xs font-bold text-gray-900 uppercase tracking-wider mb-3">
+          <h3 className="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-wider mb-3">
             Maintenance Tips
           </h3>
-          <p className="text-sm text-gray-600 leading-relaxed">
+          <p className="text-sm text-gray-600 dark:text-slate-300 leading-relaxed">
             {info.treatment}
           </p>
         </motion.div>
@@ -164,20 +164,20 @@ export default function ResultCard({ result }) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
-          className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"
+          className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 shadow-sm overflow-hidden"
         >
           <button
             onClick={() => setShowAlternatives(!showAlternatives)}
-            className="w-full flex items-center justify-between px-5 py-3.5 text-left hover:bg-gray-50 transition-colors"
+            className="w-full flex items-center justify-between px-5 py-3.5 text-left hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
           >
-            <span className="text-sm font-semibold text-gray-600">
+            <span className="text-sm font-semibold text-gray-600 dark:text-slate-300">
               Other possible diagnoses
             </span>
             <motion.div
               animate={{ rotate: showAlternatives ? 180 : 0 }}
               transition={{ duration: 0.2 }}
             >
-              <ChevronDown className="w-4 h-4 text-gray-400" />
+              <ChevronDown className="w-4 h-4 text-gray-400 dark:text-slate-500" />
             </motion.div>
           </button>
 

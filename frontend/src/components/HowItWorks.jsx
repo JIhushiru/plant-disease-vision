@@ -29,8 +29,8 @@ export default function HowItWorks() {
   return (
     <div className="mt-16 mb-8">
       <div className="text-center mb-8">
-        <h3 className="text-xl font-bold text-gray-900">How It Works</h3>
-        <p className="text-sm text-gray-500 mt-1">
+        <h3 className="text-xl font-bold text-gray-900 dark:text-white">How It Works</h3>
+        <p className="text-sm text-gray-500 dark:text-slate-400 mt-1">
           Three simple steps to diagnose plant health
         </p>
       </div>
@@ -51,13 +51,13 @@ export default function HowItWorks() {
                 <step.icon className="w-6 h-6 text-white" />
               </div>
             </div>
-            <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">
+            <div className="text-xs font-bold text-gray-400 dark:text-slate-500 uppercase tracking-wider mb-1">
               Step {step.step}
             </div>
-            <h4 className="text-base font-bold text-gray-900 mb-1">
+            <h4 className="text-base font-bold text-gray-900 dark:text-white mb-1">
               {step.title}
             </h4>
-            <p className="text-sm text-gray-500 leading-relaxed">
+            <p className="text-sm text-gray-500 dark:text-slate-400 leading-relaxed">
               {step.description}
             </p>
           </motion.div>

@@ -16,7 +16,7 @@ export default function RejectionCard({ reason }) {
       transition={{ duration: 0.5, ease: "easeOut" }}
       className="space-y-3"
     >
-      <div className="bg-linear-to-br from-warning-50/80 to-warning-100/40 border-2 border-warning-200 rounded-2xl p-5 sm:p-6">
+      <div className="bg-linear-to-br from-warning-50/80 to-warning-100/40 border-2 border-warning-200 dark:from-warning-400/10 dark:to-warning-500/5 dark:border-warning-400/30 rounded-2xl p-5 sm:p-6">
         <div className="flex items-start gap-3 mb-4">
           <motion.div
             initial={{ scale: 0 }}
@@ -27,10 +27,10 @@ export default function RejectionCard({ reason }) {
             <Leaf className="w-6 h-6" />
           </motion.div>
           <div className="min-w-0">
-            <h3 className="text-xl font-bold text-gray-900 leading-tight">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white leading-tight">
               Not a Plant Leaf
             </h3>
-            <p className="text-sm text-gray-500 mt-1">{reason}</p>
+            <p className="text-sm text-gray-500 dark:text-slate-400 mt-1">{reason}</p>
           </div>
         </div>
       </div>
@@ -39,9 +39,9 @@ export default function RejectionCard({ reason }) {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3, duration: 0.4 }}
-        className="bg-white rounded-2xl border border-gray-100 p-5 sm:p-6 shadow-sm"
+        className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 p-5 sm:p-6 shadow-sm"
       >
-        <h3 className="text-xs font-bold text-gray-900 uppercase tracking-wider mb-4">
+        <h3 className="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-wider mb-4">
           Tips for Best Results
         </h3>
         <div className="space-y-3">
@@ -53,10 +53,10 @@ export default function RejectionCard({ reason }) {
               transition={{ delay: 0.4 + idx * 0.1, duration: 0.4 }}
               className="flex items-center gap-3"
             >
-              <div className="w-9 h-9 rounded-xl bg-warning-100 flex items-center justify-center shrink-0">
-                <Icon className="w-4 h-4 text-warning-600" />
+              <div className="w-9 h-9 rounded-xl bg-warning-100 dark:bg-warning-400/10 flex items-center justify-center shrink-0">
+                <Icon className="w-4 h-4 text-warning-600 dark:text-warning-400" />
               </div>
-              <p className="text-sm text-gray-700">{text}</p>
+              <p className="text-sm text-gray-700 dark:text-slate-300">{text}</p>
             </motion.div>
           ))}
         </div>
