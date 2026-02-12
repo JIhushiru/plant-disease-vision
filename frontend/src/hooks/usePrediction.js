@@ -32,5 +32,10 @@ export function usePrediction() {
     setError(null);
   }, []);
 
-  return { result, loading, error, predict, reset };
+  const restoreResult = useCallback((data) => {
+    setError(null);
+    setResult(data);
+  }, []);
+
+  return { result, loading, error, predict, reset, restoreResult };
 }

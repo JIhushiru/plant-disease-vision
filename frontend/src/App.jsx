@@ -17,7 +17,7 @@ export default function App() {
   const [preview, setPreview] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [history, setHistory] = useState([]);
-  const { result, loading, error, predict, reset } = usePrediction();
+  const { result, loading, error, predict, reset, restoreResult } = usePrediction();
   const resultRef = useRef(null);
 
   const handleFileSelect = useCallback(
@@ -29,7 +29,7 @@ export default function App() {
       const data = await predict(file);
       if (data?.success) {
         setHistory((prev) => [
-          { id: ++historyId, preview: url, prediction: data.prediction, timestamp: Date.now() },
+          { id: ++historyId, preview: url, result: data, timestamp: Date.now() },
           ...prev.slice(0, 9),
         ]);
       }
@@ -53,10 +53,14 @@ export default function App() {
     }
   }, [selectedFile, predict]);
 
-  const handleHistorySelect = useCallback((item) => {
-    setPreview(item.preview);
-    setSelectedFile(null);
-  }, []);
+  const handleHistorySelect = useCallback(
+    (item) => {
+      setPreview(item.preview);
+      setSelectedFile(null);
+      restoreResult(item.result);
+    },
+    [restoreResult],
+  );
 
   const handleHistoryClear = useCallback(() => {
     setHistory([]);

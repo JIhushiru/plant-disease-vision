@@ -6,7 +6,6 @@ import {
   Stethoscope,
   Pill,
   ChevronDown,
-  ChevronUp,
   Sparkles,
 } from "lucide-react";
 import { useState } from "react";

@@ -1,8 +1,12 @@
+import logging
+
 import torch
 import torch.nn.functional as F
 
 from app.models.classifier import CLASS_NAMES, DISEASE_INFO, load_model
 from app.utils.image_processing import preprocess_image, validate_image
+
+logger = logging.getLogger(__name__)
 
 _model = None
 
@@ -29,11 +33,19 @@ def predict(image_bytes: bytes) -> dict:
             ),
         }
 
-    tensor = preprocess_image(image_bytes)
+    try:
+        tensor = preprocess_image(image_bytes)
+    except Exception as e:
+        logger.exception("Failed to preprocess image")
+        return {"success": False, "error": "Failed to process image. Please try a different file."}
 
-    with torch.no_grad():
-        outputs = model(tensor)
-        probabilities = F.softmax(outputs, dim=1)
+    try:
+        with torch.no_grad():
+            outputs = model(tensor)
+            probabilities = F.softmax(outputs, dim=1)
+    except Exception as e:
+        logger.exception("Model inference failed")
+        return {"success": False, "error": "Model inference failed. Please try again."}
 
     probs = probabilities.squeeze().cpu().numpy()
 

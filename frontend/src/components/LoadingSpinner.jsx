@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Scan, Leaf } from "lucide-react";
+import { Scan } from "lucide-react";
 
 const pulseRings = [0, 1, 2];
 

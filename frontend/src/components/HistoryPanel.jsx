@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { Clock, ShieldCheck, ShieldAlert, Trash2, X } from "lucide-react";
+import { Clock, ShieldCheck, ShieldAlert, Trash2 } from "lucide-react";
 
 export default function HistoryPanel({ history, onSelect, onClear }) {
   if (history.length === 0) return null;
@@ -48,14 +48,14 @@ export default function HistoryPanel({ history, onSelect, onClear }) {
               />
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-gray-800 truncate">
-                  {item.prediction.condition}
+                  {item.result.prediction.condition}
                 </p>
                 <p className="text-xs text-gray-400 truncate">
-                  {item.prediction.plant} — {item.prediction.confidence.toFixed(1)}%
+                  {item.result.prediction.plant} — {item.result.prediction.confidence.toFixed(1)}%
                 </p>
               </div>
               <div className="shrink-0">
-                {item.prediction.is_healthy ? (
+                {item.result.prediction.is_healthy ? (
                   <ShieldCheck className="w-4 h-4 text-primary-500" />
                 ) : (
                   <ShieldAlert className="w-4 h-4 text-danger-400" />

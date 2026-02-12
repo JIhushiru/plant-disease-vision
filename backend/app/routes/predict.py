@@ -1,6 +1,11 @@
+import logging
+
 from fastapi import APIRouter, File, HTTPException, UploadFile
 
+from app.config import settings
 from app.services.prediction import predict
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api", tags=["prediction"])
 
@@ -11,6 +16,17 @@ async def predict_disease(file: UploadFile = File(...)):
         raise HTTPException(status_code=400, detail="Uploaded file must be an image.")
 
     image_bytes = await file.read()
+
+    if len(image_bytes) == 0:
+        raise HTTPException(status_code=400, detail="Uploaded file is empty.")
+
+    if len(image_bytes) > settings.max_file_size:
+        size_mb = settings.max_file_size // (1024 * 1024)
+        raise HTTPException(
+            status_code=413,
+            detail=f"File too large. Maximum size is {size_mb} MB.",
+        )
+
     result = predict(image_bytes)
 
     if not result["success"]:

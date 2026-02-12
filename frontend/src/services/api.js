@@ -4,8 +4,23 @@ const API_BASE = import.meta.env.VITE_API_URL || "";
 
 const api = axios.create({
   baseURL: API_BASE,
-  timeout: 30000,
+  timeout: 60000,
 });
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (!error.response) {
+      if (error.code === "ECONNABORTED") {
+        error.message = "Request timed out. The server may be busy — please try again.";
+      } else {
+        error.message =
+          "Unable to connect to the server. Please check that the backend is running.";
+      }
+    }
+    return Promise.reject(error);
+  },
+);
 
 export async function predictDisease(file) {
   const formData = new FormData();
