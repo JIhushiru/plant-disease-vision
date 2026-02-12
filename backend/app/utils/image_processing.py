@@ -1,5 +1,6 @@
 from io import BytesIO
 
+import pillow_avif  # noqa: F401 — registers AVIF codec with Pillow
 import torch
 from PIL import Image
 from torchvision import transforms

@@ -16,10 +16,13 @@ export default function ImageDropzone({ onFileSelect, loading, preview }) {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
-      "image/jpeg": [".jpg", ".jpeg"],
+      "image/jpeg": [".jpg", ".jpeg", ".jfif"],
       "image/png": [".png"],
       "image/webp": [".webp"],
-      "image/bmp": [".bmp"],
+      "image/bmp": [".bmp", ".dib"],
+      "image/gif": [".gif"],
+      "image/tiff": [".tiff", ".tif"],
+      "image/avif": [".avif"],
     },
     multiple: false,
     disabled: loading,
@@ -118,6 +121,9 @@ export default function ImageDropzone({ onFileSelect, loading, preview }) {
               <span className="bg-gray-100 dark:bg-slate-800 px-2.5 py-1 rounded-md">JPG</span>
               <span className="bg-gray-100 dark:bg-slate-800 px-2.5 py-1 rounded-md">PNG</span>
               <span className="bg-gray-100 dark:bg-slate-800 px-2.5 py-1 rounded-md">WebP</span>
+              <span className="bg-gray-100 dark:bg-slate-800 px-2.5 py-1 rounded-md">AVIF</span>
+              <span className="bg-gray-100 dark:bg-slate-800 px-2.5 py-1 rounded-md">GIF</span>
+              <span className="bg-gray-100 dark:bg-slate-800 px-2.5 py-1 rounded-md">TIFF</span>
               <span className="text-gray-300 dark:text-slate-600">|</span>
               <span>Max 10 MB</span>
             </div>
