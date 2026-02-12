@@ -27,19 +27,23 @@ The choice of the PlantVillage dataset (54,000+ labeled images across 14 species
 
 ## How It Works
 
-The pipeline has three stages:
+The pipeline has four stages:
 
-**1. Image preprocessing** — The uploaded leaf image is resized to 224x224, normalized against ImageNet statistics, and converted to a tensor. During training, augmentation (random crops, flips, rotations, color jitter) is applied to improve generalization across different lighting conditions and camera angles.
+**1. Input validation** — The uploaded image is checked for format (JPEG, PNG, WebP, BMP) and size (max 10 MB). A CLIP ViT-L/14 model then performs zero-shot classification to verify the image actually contains a plant leaf before any disease analysis begins. Non-plant uploads (animals, vehicles, people, random objects) are rejected with a clear message and tips for taking better photos.
 
-**2. Classification** — An EfficientNet-B0 backbone, pretrained on ImageNet, is fine-tuned on the PlantVillage dataset. EfficientNet was chosen over ResNet for its better accuracy-to-parameter ratio — it achieves competitive performance with ~5.3M parameters compared to ResNet-50's ~25.6M, which matters for inference speed and deployment on resource-constrained hardware. The model outputs a softmax probability distribution over all 38 classes.
+**2. Image preprocessing** — The validated leaf image is resized to 224x224, normalized against ImageNet statistics, and converted to a tensor. During training, augmentation (random crops, flips, rotations, color jitter) is applied to improve generalization across different lighting conditions and camera angles.
 
-**3. Diagnosis generation** — The top-5 predictions with confidence scores are returned alongside a structured report for the primary diagnosis. Each of the 38 disease classes is mapped to curated information: the causal pathogen, visible symptom descriptions, and evidence-based treatment recommendations sourced from agricultural extension literature.
+**3. Classification** — An EfficientNet-B0 backbone, pretrained on ImageNet, is fine-tuned on the PlantVillage dataset. EfficientNet was chosen over ResNet for its better accuracy-to-parameter ratio — it achieves competitive performance with ~5.3M parameters compared to ResNet-50's ~25.6M, which matters for inference speed and deployment on resource-constrained hardware. The model outputs a softmax probability distribution over all 38 classes.
+
+**4. Diagnosis generation** — The top-5 predictions with confidence scores are returned alongside a structured report for the primary diagnosis. Each of the 38 disease classes is mapped to curated information: the causal pathogen, visible symptom descriptions, and evidence-based treatment recommendations sourced from agricultural extension literature.
 
 ```
-Image → Preprocessing → EfficientNet-B0 → Softmax → Top-K Predictions
-                                                          ↓
-                                                  Disease Info Lookup
-                                                  (cause, symptoms, treatment)
+Image → Format/Size Check → CLIP Plant Guard → Preprocessing → EfficientNet-B0
+                                   ↓                                   ↓
+                           Reject non-plant                     Softmax → Top-K
+                                                                       ↓
+                                                               Disease Info Lookup
+                                                               (cause, symptoms, treatment)
 ```
 
 ## Architecture Decisions
@@ -124,7 +128,9 @@ backend/
 │   ├── models/classifier.py     # Model architecture, class names, disease DB
 │   ├── routes/predict.py        # /api/predict, /api/classes endpoints
 │   ├── services/prediction.py   # Inference orchestration
-│   └── utils/image_processing.py
+│   └── utils/
+│       ├── image_processing.py  # Validation, resize, normalize
+│       └── plant_guard.py       # CLIP-based non-plant rejection
 ├── training/
 │   ├── train.py                 # Training loop w/ checkpointing
 │   ├── dataset.py               # PlantVillage loader + augmentation
@@ -150,6 +156,7 @@ frontend/
 | Layer      | Technology                              | Rationale                                            |
 |------------|-----------------------------------------|------------------------------------------------------|
 | Model      | PyTorch, torchvision, EfficientNet-B0   | Best accuracy-per-FLOP; strong transfer learning     |
+| Guard      | OpenAI CLIP ViT-L/14, Hugging Face Transformers | Zero-shot plant detection; rejects non-plant uploads |
 | API        | FastAPI, Python 3.12                    | Async I/O, auto validation, OpenAPI docs             |
 | Frontend   | React 19, Vite, Tailwind CSS            | Fast dev loop, utility-first styling, small bundle   |
 | Animation  | Framer Motion                           | Physics-based transitions for result reveals         |

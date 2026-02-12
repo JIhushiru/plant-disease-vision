@@ -24,6 +24,10 @@ def predict(image_bytes: bytes) -> dict:
     if not valid:
         return {"success": False, "error": message}
 
+    is_plant, rejection_reason = check_plant_validity(image_bytes)
+    if not is_plant:
+        return {"success": True, "rejected": True, "reason": rejection_reason}
+
     model = get_model()
     if model is None:
         return {
@@ -49,10 +53,6 @@ def predict(image_bytes: bytes) -> dict:
         return {"success": False, "error": "Model inference failed. Please try again."}
 
     probs = probabilities.squeeze().cpu().numpy()
-
-    is_plant, rejection_reason = check_plant_validity(probs)
-    if not is_plant:
-        return {"success": True, "rejected": True, "reason": rejection_reason}
 
     top_k = 5
     top_indices = probs.argsort()[::-1][:top_k]

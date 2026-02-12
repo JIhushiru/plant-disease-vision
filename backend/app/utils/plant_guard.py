@@ -1,7 +1,9 @@
 import logging
-from math import log
+from io import BytesIO
 
-import numpy as np
+import torch
+from PIL import Image
+from transformers import CLIPModel, CLIPProcessor
 
 from app.config import settings
 
@@ -12,39 +14,74 @@ REJECTION_MESSAGE = (
     "Please upload a clear photo of a plant leaf for disease diagnosis."
 )
 
+# Labels for zero-shot classification.
+# Plant-positive labels come first; everything else is negative.
+PLANT_LABELS = [
+    "a photo of a plant leaf",
+    "a photo of a diseased plant leaf",
+    "a photo of a healthy green leaf",
+]
+NON_PLANT_LABELS = [
+    "a photo of a dog",
+    "a photo of a cat",
+    "a photo of a person",
+    "a photo of a car",
+    "a photo of a building",
+    "a photo of food on a plate",
+    "a photo of an electronic device",
+    "a photo of furniture",
+    "a photo of a landscape without plants",
+    "a photo of text or a document",
+]
+ALL_LABELS = PLANT_LABELS + NON_PLANT_LABELS
 
-def check_plant_validity(probs: np.ndarray) -> tuple[bool, str | None]:
-    """Check whether the softmax distribution looks like a real plant image.
+_clip_model = None
+_clip_processor = None
 
-    Uses three complementary metrics. If 2+ flag the input, reject it.
+
+def _get_clip():
+    """Load CLIP model and processor (lazy, singleton)."""
+    global _clip_model, _clip_processor
+    if _clip_model is None:
+        logger.info("Loading CLIP model: %s", settings.guard_clip_model)
+        _clip_model = CLIPModel.from_pretrained(settings.guard_clip_model)
+        _clip_processor = CLIPProcessor.from_pretrained(settings.guard_clip_model)
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        _clip_model.to(device)
+        _clip_model.eval()
+        logger.info("CLIP guard loaded on %s", device)
+    return _clip_model, _clip_processor
+
+
+def check_plant_validity(image_bytes: bytes) -> tuple[bool, str | None]:
+    """Use CLIP zero-shot classification to verify the image contains a plant leaf.
+
+    Returns:
+        (True, None) if a plant leaf is detected, (False, reason) otherwise.
     """
-    sorted_probs = np.sort(probs)[::-1]
+    model, processor = _get_clip()
+    device = next(model.parameters()).device
 
-    max_conf = float(sorted_probs[0])
-    margin = float(sorted_probs[0] - sorted_probs[1])
-    entropy = _normalized_entropy(probs)
+    image = Image.open(BytesIO(image_bytes)).convert("RGB")
 
-    flags = 0
-    if max_conf < settings.guard_confidence_threshold:
-        flags += 1
-    if entropy > settings.guard_entropy_threshold:
-        flags += 1
-    if margin < settings.guard_margin_threshold:
-        flags += 1
+    inputs = processor(text=ALL_LABELS, images=image, return_tensors="pt", padding=True)
+    inputs = {k: v.to(device) for k, v in inputs.items()}
+
+    with torch.no_grad():
+        outputs = model(**inputs)
+        logits = outputs.logits_per_image.squeeze()
+        probs = logits.softmax(dim=0)
+
+    plant_prob = float(probs[: len(PLANT_LABELS)].sum())
 
     logger.debug(
-        "Plant guard: max_conf=%.3f, entropy=%.3f, margin=%.3f, flags=%d",
-        max_conf, entropy, margin, flags,
+        "CLIP guard: plant_prob=%.3f, top_label=%s (%.3f)",
+        plant_prob,
+        ALL_LABELS[probs.argmax().item()],
+        float(probs.max()),
     )
 
-    if flags >= 2:
+    if plant_prob < settings.guard_plant_threshold:
         return False, REJECTION_MESSAGE
+
     return True, None
-
-
-def _normalized_entropy(probs: np.ndarray) -> float:
-    """Shannon entropy normalized to [0, 1] for the given number of classes."""
-    probs = probs[probs > 0]
-    raw = -float(np.sum(probs * np.log(probs)))
-    max_entropy = log(len(probs)) if len(probs) > 1 else 1.0
-    return raw / max_entropy

@@ -28,9 +28,8 @@ class Settings(BaseSettings):
     max_file_size: int = 10 * 1024 * 1024  # 10 MB
     allowed_extensions: set[str] = {"jpg", "jpeg", "png", "webp", "bmp"}
 
-    guard_confidence_threshold: float = 0.45
-    guard_entropy_threshold: float = 0.75
-    guard_margin_threshold: float = 0.10
+    guard_clip_model: str = "openai/clip-vit-large-patch14"
+    guard_plant_threshold: float = 0.5
 
     class Config:
         env_file = ".env"
