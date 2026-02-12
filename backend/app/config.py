@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 
 from pydantic_settings import BaseSettings
@@ -15,7 +14,6 @@ class Settings(BaseSettings):
     model_backbone: str = "efficientnet_b0"
     num_classes: int = 38
     image_size: int = 224
-    confidence_threshold: float = 0.15
 
     allowed_origins: list[str] = [
         "http://localhost:5173",

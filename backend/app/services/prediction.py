@@ -35,7 +35,7 @@ def predict(image_bytes: bytes) -> dict:
 
     try:
         tensor = preprocess_image(image_bytes)
-    except Exception as e:
+    except Exception:
         logger.exception("Failed to preprocess image")
         return {"success": False, "error": "Failed to process image. Please try a different file."}
 
@@ -43,7 +43,7 @@ def predict(image_bytes: bytes) -> dict:
         with torch.no_grad():
             outputs = model(tensor)
             probabilities = F.softmax(outputs, dim=1)
-    except Exception as e:
+    except Exception:
         logger.exception("Model inference failed")
         return {"success": False, "error": "Model inference failed. Please try again."}
 
