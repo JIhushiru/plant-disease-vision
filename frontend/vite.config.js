@@ -12,4 +12,14 @@ export default defineConfig({
       },
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          firebase: ["firebase/app", "firebase/database"],
+          vendor: ["react", "react-dom", "framer-motion"],
+        },
+      },
+    },
+  },
 });

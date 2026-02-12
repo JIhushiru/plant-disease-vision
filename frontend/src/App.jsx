@@ -9,16 +9,26 @@ import HistoryPanel from "./components/HistoryPanel";
 import HowItWorks from "./components/HowItWorks";
 import SupportedPlants from "./components/SupportedPlants";
 import { usePrediction } from "./hooks/usePrediction";
+import { useFirebaseHistory } from "./hooks/useFirebaseHistory";
 import { RotateCcw } from "lucide-react";
 
-let historyId = 0;
+let localId = 0;
 
 export default function App() {
   const [preview, setPreview] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
-  const [history, setHistory] = useState([]);
-  const { result, loading, error, predict, reset, restoreResult } = usePrediction();
+  const [localHistory, setLocalHistory] = useState([]);
+  const { result, loading, error, predict, reset, restoreResult } =
+    usePrediction();
+  const {
+    history: firebaseHistory,
+    addEntry: addFirebaseEntry,
+    clear: clearFirebase,
+    enabled: firebaseEnabled,
+  } = useFirebaseHistory();
   const resultRef = useRef(null);
+
+  const history = firebaseEnabled ? firebaseHistory : localHistory;
 
   const handleFileSelect = useCallback(
     async (file) => {
@@ -27,18 +37,31 @@ export default function App() {
       setPreview(url);
 
       const data = await predict(file);
+
       if (data?.success) {
-        setHistory((prev) => [
-          { id: ++historyId, preview: url, result: data, timestamp: Date.now() },
-          ...prev.slice(0, 9),
-        ]);
+        if (firebaseEnabled) {
+          addFirebaseEntry(data, file);
+        } else {
+          setLocalHistory((prev) => [
+            {
+              id: ++localId,
+              preview: url,
+              result: data,
+              timestamp: Date.now(),
+            },
+            ...prev.slice(0, 9),
+          ]);
+        }
       }
 
       setTimeout(() => {
-        resultRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        resultRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "nearest",
+        });
       }, 100);
     },
-    [predict],
+    [predict, firebaseEnabled, addFirebaseEntry],
   );
 
   const handleReset = useCallback(() => {
@@ -55,16 +78,30 @@ export default function App() {
 
   const handleHistorySelect = useCallback(
     (item) => {
-      setPreview(item.preview);
+      const img = item.preview || item.imageSnippet || null;
+      setPreview(img);
       setSelectedFile(null);
-      restoreResult(item.result);
+
+      if (item.result) {
+        restoreResult(item.result);
+      } else if (item.prediction) {
+        restoreResult({
+          success: true,
+          prediction: item.prediction,
+          alternatives: item.alternatives || [],
+        });
+      }
     },
     [restoreResult],
   );
 
   const handleHistoryClear = useCallback(() => {
-    setHistory([]);
-  }, []);
+    if (firebaseEnabled) {
+      clearFirebase();
+    } else {
+      setLocalHistory([]);
+    }
+  }, [firebaseEnabled, clearFirebase]);
 
   return (
     <div className="min-h-screen bg-linear-to-br from-gray-50 via-white to-primary-50/30">
@@ -117,6 +154,7 @@ export default function App() {
               history={history}
               onSelect={handleHistorySelect}
               onClear={handleHistoryClear}
+              persisted={firebaseEnabled}
             />
           </div>
 
