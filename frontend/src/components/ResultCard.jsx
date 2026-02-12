@@ -7,25 +7,31 @@ import {
   Pill,
   ChevronDown,
   ChevronUp,
+  Sparkles,
 } from "lucide-react";
 import { useState } from "react";
 import ConfidenceBar from "./ConfidenceBar";
 
-function DiseaseDetail({ icon: Icon, title, content, color }) {
+function DiseaseDetail({ icon: Icon, title, content, color, delay }) {
   return (
-    <div className="flex gap-3">
+    <motion.div
+      initial={{ opacity: 0, x: -10 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ delay, duration: 0.4 }}
+      className="flex gap-3"
+    >
       <div
-        className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${color}`}
+        className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${color}`}
       >
         <Icon className="w-4 h-4" />
       </div>
-      <div>
-        <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-0.5">
+      <div className="min-w-0">
+        <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">
           {title}
         </h4>
         <p className="text-sm text-gray-700 leading-relaxed">{content}</p>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -42,33 +48,51 @@ export default function ResultCard({ result }) {
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
-      className="space-y-4"
+      className="space-y-3"
     >
+      {/* Status badge */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.1 }}
+        className="flex items-center gap-2"
+      >
+        <Sparkles className="w-4 h-4 text-primary-500" />
+        <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+          Analysis Complete
+        </span>
+      </motion.div>
+
       {/* Main prediction */}
       <div
-        className={`rounded-2xl p-5 sm:p-6 border ${
+        className={`rounded-2xl p-5 sm:p-6 border-2 transition-colors ${
           is_healthy
-            ? "bg-primary-50/50 border-primary-200"
-            : "bg-danger-50/50 border-danger-200"
+            ? "bg-linear-to-br from-primary-50/80 to-primary-100/40 border-primary-200"
+            : "bg-linear-to-br from-danger-50/80 to-danger-100/40 border-danger-200"
         }`}
       >
-        <div className="flex items-start gap-3 mb-4">
-          <div
-            className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
+        <div className="flex items-start gap-3 mb-5">
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+            className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 shadow-sm ${
               is_healthy
-                ? "bg-primary-100 text-primary-700"
-                : "bg-danger-100 text-danger-600"
+                ? "bg-primary-500 text-white"
+                : "bg-danger-500 text-white"
             }`}
           >
             {is_healthy ? (
-              <ShieldCheck className="w-5 h-5" />
+              <ShieldCheck className="w-6 h-6" />
             ) : (
-              <ShieldAlert className="w-5 h-5" />
+              <ShieldAlert className="w-6 h-6" />
             )}
-          </div>
+          </motion.div>
           <div className="min-w-0">
-            <h3 className="text-lg font-bold text-gray-900">{condition}</h3>
-            <p className="text-sm text-gray-500">{plant}</p>
+            <h3 className="text-xl font-bold text-gray-900 leading-tight">
+              {condition}
+            </h3>
+            <p className="text-sm text-gray-500 mt-0.5">{plant}</p>
           </div>
         </div>
 
@@ -88,27 +112,32 @@ export default function ResultCard({ result }) {
           transition={{ delay: 0.3, duration: 0.4 }}
           className="bg-white rounded-2xl border border-gray-100 p-5 sm:p-6 space-y-4 shadow-sm"
         >
-          <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider">
+          <h3 className="text-xs font-bold text-gray-900 uppercase tracking-wider">
             Disease Information
           </h3>
-          <DiseaseDetail
-            icon={Bug}
-            title="Cause"
-            content={info.cause}
-            color="bg-orange-100 text-orange-600"
-          />
-          <DiseaseDetail
-            icon={Stethoscope}
-            title="Symptoms"
-            content={info.symptoms}
-            color="bg-blue-100 text-blue-600"
-          />
-          <DiseaseDetail
-            icon={Pill}
-            title="Treatment"
-            content={info.treatment}
-            color="bg-violet-100 text-violet-600"
-          />
+          <div className="space-y-4">
+            <DiseaseDetail
+              icon={Bug}
+              title="Cause"
+              content={info.cause}
+              color="bg-orange-100 text-orange-600"
+              delay={0.4}
+            />
+            <DiseaseDetail
+              icon={Stethoscope}
+              title="Symptoms"
+              content={info.symptoms}
+              color="bg-blue-100 text-blue-600"
+              delay={0.5}
+            />
+            <DiseaseDetail
+              icon={Pill}
+              title="Recommended Treatment"
+              content={info.treatment}
+              color="bg-violet-100 text-violet-600"
+              delay={0.6}
+            />
+          </div>
         </motion.div>
       )}
 
@@ -119,8 +148,8 @@ export default function ResultCard({ result }) {
           transition={{ delay: 0.3, duration: 0.4 }}
           className="bg-white rounded-2xl border border-gray-100 p-5 sm:p-6 shadow-sm"
         >
-          <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-2">
-            Care Tips
+          <h3 className="text-xs font-bold text-gray-900 uppercase tracking-wider mb-3">
+            Maintenance Tips
           </h3>
           <p className="text-sm text-gray-600 leading-relaxed">
             {info.treatment}
@@ -130,19 +159,25 @@ export default function ResultCard({ result }) {
 
       {/* Alternative predictions */}
       {alternatives && alternatives.length > 0 && (
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+          className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"
+        >
           <button
             onClick={() => setShowAlternatives(!showAlternatives)}
-            className="w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors"
+            className="w-full flex items-center justify-between px-5 py-3.5 text-left hover:bg-gray-50 transition-colors"
           >
-            <span className="text-sm font-semibold text-gray-700">
+            <span className="text-sm font-semibold text-gray-600">
               Other possible diagnoses
             </span>
-            {showAlternatives ? (
-              <ChevronUp className="w-4 h-4 text-gray-400" />
-            ) : (
+            <motion.div
+              animate={{ rotate: showAlternatives ? 180 : 0 }}
+              transition={{ duration: 0.2 }}
+            >
               <ChevronDown className="w-4 h-4 text-gray-400" />
-            )}
+            </motion.div>
           </button>
 
           <motion.div
@@ -154,19 +189,19 @@ export default function ResultCard({ result }) {
             transition={{ duration: 0.3, ease: "easeInOut" }}
             className="overflow-hidden"
           >
-            <div className="px-4 pb-4 space-y-3">
+            <div className="px-5 pb-4 space-y-3">
               {alternatives.map((alt, idx) => (
                 <ConfidenceBar
                   key={alt.class_name}
                   label={`${alt.plant} — ${alt.condition}`}
                   confidence={alt.confidence}
                   isHealthy={alt.is_healthy}
-                  delay={idx * 0.1}
+                  delay={idx * 0.08}
                 />
               ))}
             </div>
           </motion.div>
-        </div>
+        </motion.div>
       )}
     </motion.div>
   );

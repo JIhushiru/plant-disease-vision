@@ -14,12 +14,14 @@ export function usePrediction() {
     try {
       const data = await predictDisease(file);
       setResult(data);
+      return data;
     } catch (err) {
       const message =
         err.response?.data?.detail ||
         err.message ||
         "An unexpected error occurred.";
       setError(message);
+      return null;
     } finally {
       setLoading(false);
     }
